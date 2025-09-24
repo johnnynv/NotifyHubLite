@@ -92,15 +92,15 @@ if [ "$DOCKER_AVAILABLE" = true ]; then
     export SERVER_IP="$SERVER_IP"
     export DOMAIN_SUFFIX="nip.io"
     
-    docker-compose up -d postfix
+    sudo docker compose up -d postfix
     echo "等待SMTP服务启动..."
     sleep 5
     
-    if docker ps | grep -q smtp-server; then
+    if sudo docker ps | grep -q smtp-server; then
         echo -e "${GREEN}✓${NC} SMTP服务启动成功"
     else
         echo -e "${RED}错误: SMTP服务启动失败${NC}"
-        docker logs smtp-server
+        sudo docker logs smtp-server
         exit 1
     fi
 else
@@ -145,7 +145,7 @@ echo ""
 echo -e "${YELLOW}停止服务:${NC}"
 echo "  按 Ctrl+C 停止API服务"
 if [ "$DOCKER_AVAILABLE" = true ]; then
-    echo "  停止SMTP: docker-compose down"
+    echo "  停止SMTP: sudo docker compose down"
 fi
 echo ""
 

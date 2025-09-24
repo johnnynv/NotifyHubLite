@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     debug: bool = True
     
     # Network Configuration
-    server_ip: str = "203.18.50.4"  # Server public IP address
+    server_ip: str = "10.78.14.61"  # Server public IP address
     domain_suffix: str = "nip.io"   # Domain suffix for development
     
     # Database Configuration  

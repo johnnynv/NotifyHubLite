@@ -7,3 +7,5 @@
 # Temporary files
 test_*.py
 smtp_test.py
+
+__pycache__/
