@@ -17,14 +17,14 @@ services:
   postfix:
     image: juanluisbaptiste/postfix:latest
     container_name: smtp-server
-    hostname: mail.203.18.50.4.nip.io
+    hostname: mail.${SERVER_IP:-203.18.50.4}.${DOMAIN_SUFFIX:-nip.io}
     restart: unless-stopped
     ports:
       - "25:25"
     environment:
-      - SMTP_SERVER=smtp.nvidia.com
-      - SMTP_PORT=25
-      - SMTP_NETWORKS=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.nvidia.com}
+      - SMTP_PORT=${SMTP_PORT:-25}
+      - SMTP_NETWORKS=${SMTP_NETWORKS:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
     volumes:
       - mail_data:/var/mail
 

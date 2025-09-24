@@ -15,7 +15,7 @@ class EmailSendRequest(BaseModel):
                 "recipients": ["johnnyj@nvidia.com"],
                 "subject": "Test Email from NotifyHubLite",
                 "body": "Hello Johnny,\n\nThis is a plain text test email from NotifyHubLite API.",
-                "sender_email": "noreply@203.18.50.4.nip.io",
+                "sender_email": "noreply@example.com",
                 "sender_name": "NotifyHub System"
             }
         }

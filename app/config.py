@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     port: int = 8000
     debug: bool = True
     
+    # Network Configuration
+    server_ip: str = "203.18.50.4"  # Server public IP address
+    domain_suffix: str = "nip.io"   # Domain suffix for development
+    
     # Database Configuration  
     database_url: str = "postgresql://notifyhub:secure-password-123@localhost:5432/notifyhublite"
     
@@ -27,7 +31,7 @@ class Settings(BaseSettings):
     smtp_password: str = ""  # No auth needed for local relay
     smtp_use_tls: bool = False
     smtp_from_name: str = "NotifyHub System"
-    smtp_from_email: str = "noreply@203.18.50.4.nip.io"
+    smtp_from_email: str = ""  # Will be set dynamically based on server_ip and domain_suffix
     
     # File Storage Configuration
     upload_dir: str = "./uploads"
@@ -61,6 +65,25 @@ class Settings(BaseSettings):
         case_sensitive = False
         extra = "ignore"  # Allow extra fields from environment
 
+    @property
+    def base_domain(self) -> str:
+        """Generate base domain from IP and suffix"""
+        return f"{self.server_ip}.{self.domain_suffix}"
+    
+    @property
+    def mail_hostname(self) -> str:
+        """Generate mail server hostname"""
+        return f"mail.{self.base_domain}"
+    
+    @property
+    def default_from_email(self) -> str:
+        """Generate default from email address"""
+        return f"noreply@{self.base_domain}"
+
 
 # Global settings instance
 settings = Settings()
+
+# Set dynamic email if not provided
+if not settings.smtp_from_email:
+    settings.smtp_from_email = settings.default_from_email

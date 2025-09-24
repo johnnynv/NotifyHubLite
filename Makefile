@@ -11,6 +11,7 @@ help:
 	@echo "Setup & Installation:"
 	@echo "  install     Install Python dependencies"
 	@echo "  dev         Install development dependencies"
+	@echo "  deploy      One-click deployment (usage: make deploy IP=YOUR_IP)"
 	@echo ""
 	@echo "Development:"
 	@echo "  api         Start FastAPI development server"
@@ -29,6 +30,7 @@ help:
 	@echo "  clean       Clean cache and temporary files"
 	@echo "  db-init     Initialize database"
 	@echo "  email-test  Send test email"
+	@echo "  configure   Configure server IP and domain settings"
 	@echo ""
 
 # Python & Dependencies
@@ -87,7 +89,7 @@ email-test:
 	@curl -X POST "http://localhost:8000/api/v1/emails/send-plain" \
 		-H "Authorization: Bearer notify-hub-api-key-123" \
 		-H "Content-Type: application/json" \
-		-d '{"recipients":["johnnyj@nvidia.com"],"subject":"NotifyHubLite API Test Email","body":"Hello Johnny,\n\nThis is a test email from NotifyHubLite API system.\n\nSystem Status:\n✅ API service operational\n✅ Authentication working\n✅ Email delivery functional\n✅ SMTP relay connected\n\nThe plain text email feature is working correctly.\n\nPlease confirm receipt of this email.\n\nBest regards,\nNotifyHubLite System","sender_email":"noreply@203.18.50.4.nip.io","sender_name":"NotifyHubLite System"}' \
+		-d '{"recipients":["johnnyj@nvidia.com"],"subject":"NotifyHubLite API Test Email","body":"Hello Johnny,\n\nThis is a test email from NotifyHubLite API system.\n\nSystem Status:\n✅ API service operational\n✅ Authentication working\n✅ Email delivery functional\n✅ SMTP relay connected\n\nThe plain text email feature is working correctly.\n\nPlease confirm receipt of this email.\n\nBest regards,\nNotifyHubLite System"}' \
 		| jq .
 
 # Code Quality
@@ -121,6 +123,20 @@ clean:
 health:
 	@echo "Checking API health..."
 	curl -s http://localhost:8000/health | jq .
+
+# Configuration
+configure:
+	@echo "Starting configuration wizard..."
+	./configure.sh
+
+# One-click deployment
+deploy:
+	@echo "Starting one-click deployment..."
+	@if [ -n "$(IP)" ]; then \
+		./quick-deploy.sh $(IP) $(API_KEY); \
+	else \
+		./quick-deploy.sh; \
+	fi
 
 # Show current status
 status:
