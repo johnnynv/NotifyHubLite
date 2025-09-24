@@ -1,121 +1,17 @@
-version: '3.8'
-
-networks:
-  notifyhub:
-    driver: bridge
+services:
+  postfix:
+    image: juanluisbaptiste/postfix:latest
+    container_name: smtp-server
+    hostname: mail.203.18.50.4.nip.io
+    restart: unless-stopped
+    ports:
+      - "25:25"
+    environment:
+      - SMTP_SERVER=smtp.nvidia.com
+      - SMTP_PORT=25
+      - SMTP_NETWORKS=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+    volumes:
+      - mail_data:/var/mail
 
 volumes:
-  postgres_data:
-  mailu_data:
-  mailu_mail:
-  mailu_dkim:
-  uploads_data:
-  redis_data:
-
-services:
-  # =============================================================================
-  # NotifyHubLite Services
-  # =============================================================================
-  postgres:
-    image: postgres:15
-    container_name: notifyhub-postgres
-    environment:
-      POSTGRES_DB: notifyhublite
-      POSTGRES_USER: notifyhub
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure-password-123}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - notifyhub
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notifyhub"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # =============================================================================
-  # Mailu Email Server (Auto TLS)
-  # =============================================================================
-  redis:
-    image: redis:7-alpine
-    container_name: mailu-redis
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-    networks:
-      - notifyhub
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  front:
-    image: docker.io/erriez/mailu-nginx:1.9.0
-    container_name: mailu-front
-    restart: unless-stopped
-    env_file: mailu.env
-    ports:
-      - "1025:25"    # SMTP (mapped to non-privileged port)
-      - "1587:587"   # SMTP Submission (mapped to non-privileged port) 
-      - "1143:143"   # IMAP (mapped to non-privileged port)
-      - "1993:993"   # IMAPS (mapped to non-privileged port)
-      - "8080:80"    # HTTP (mapped to non-privileged port)
-      - "8443:443"   # HTTPS (mapped to non-privileged port)
-    volumes:
-      - mailu_data:/data
-    networks:
-      - notifyhub
-    depends_on:
-      - redis
-
-  admin:
-    image: docker.io/erriez/mailu-admin:1.9.0
-    container_name: mailu-admin
-    restart: unless-stopped
-    env_file: mailu.env
-    volumes:
-      - mailu_data:/data
-      - mailu_dkim:/dkim
-    depends_on:
-      - redis
-    networks:
-      - notifyhub
-
-  imap:
-    image: docker.io/erriez/mailu-dovecot:1.9.0
-    container_name: mailu-imap
-    restart: unless-stopped
-    env_file: mailu.env
-    volumes:
-      - mailu_mail:/mail
-      - mailu_data:/data
-    depends_on:
-      - front
-    networks:
-      - notifyhub
-
-  smtp:
-    image: docker.io/erriez/mailu-postfix:1.9.0
-    container_name: mailu-smtp
-    restart: unless-stopped
-    env_file: mailu.env
-    volumes:
-      - mailu_data:/data
-    depends_on:
-      - front
-    networks:
-      - notifyhub
-
-  antispam:
-    image: docker.io/erriez/mailu-rspamd:1.9.0
-    container_name: mailu-antispam
-    restart: unless-stopped
-    env_file: mailu.env
-    volumes:
-      - mailu_data:/data
-    depends_on:
-      - front
-    networks:
-      - notifyhub
+  mail_data:
