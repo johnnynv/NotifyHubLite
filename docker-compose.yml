@@ -1,4 +1,19 @@
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: notifyhub-postgres
+    environment:
+      POSTGRES_DB: notifyhublite
+      POSTGRES_USER: notifyhub
+      POSTGRES_PASSWORD: secure-password-123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # SMTP Server (Postfix + NVIDIA relay)
   postfix:
     image: juanluisbaptiste/postfix:latest
     container_name: smtp-server
@@ -14,4 +29,5 @@ services:
       - mail_data:/var/mail
 
 volumes:
+  postgres_data:
   mail_data:

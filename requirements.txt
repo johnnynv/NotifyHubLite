@@ -1,0 +1,12 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.20
+alembic>=1.12.0
+psycopg2-binary>=2.9.0
+pydantic-settings>=2.0.0
+python-multipart>=0.0.6
+bleach>=6.0.0
+pdf2image>=1.16.0
+Pillow>=10.0.0
+python-jose[cryptography]>=3.3.0
+aiofiles>=23.0.0
