@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     
     # Application Settings
     app_name: str = "NotifyHubLite API"
-    app_version: str = "1.0.0"
+    app_version: str = "1.2.0"
     api_key: str = "notify-hub-api-key-123"  # Default for development. Use env var NOTIFYHUB_API_KEY in production
     host: str = "0.0.0.0"
     port: int = 8000

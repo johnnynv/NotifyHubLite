@@ -1,0 +1,45 @@
+{{- if .Values.postfix.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "notifyhub-lite.fullname" . }}-postfix
+  labels:
+    {{- include "notifyhub-lite.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postfix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "notifyhub-lite.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postfix
+  template:
+    metadata:
+      labels:
+        {{- include "notifyhub-lite.labels" . | nindent 8 }}
+        app.kubernetes.io/component: postfix
+    spec:
+      containers:
+        - name: postfix
+          image: "{{ .Values.postfix.image.repository }}:{{ .Values.postfix.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+          env:
+            - name: SERVER_HOSTNAME
+              value: "mail.{{ .Values.config.serverIp }}.{{ .Values.config.domainSuffix }}"
+            - name: SMTP_SERVER
+              value: {{ .Values.postfix.config.smtpServer | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.postfix.config.smtpPort | quote }}
+            - name: SMTP_NETWORKS
+              value: {{ .Values.postfix.config.smtpNetworks | quote }}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end }}

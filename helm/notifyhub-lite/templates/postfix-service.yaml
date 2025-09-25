@@ -1,0 +1,19 @@
+{{- if .Values.postfix.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "notifyhub-lite.fullname" . }}-postfix
+  labels:
+    {{- include "notifyhub-lite.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postfix
+spec:
+  type: {{ .Values.postfix.service.type }}
+  ports:
+    - port: {{ .Values.postfix.service.port }}
+      targetPort: smtp
+      protocol: TCP
+      name: smtp
+  selector:
+    {{- include "notifyhub-lite.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postfix
+{{- end }}
