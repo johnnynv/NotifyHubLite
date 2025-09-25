@@ -98,9 +98,8 @@ async def protected_endpoint(credentials: HTTPAuthorizationCredentials = Depends
 
 
 # Include API routers
-from app.api import emails, attachments
+from app.api import emails
 app.include_router(emails.router, prefix="/api/v1/emails", tags=["emails"])
-app.include_router(attachments.router, prefix="/api/v1/attachments", tags=["attachments"])
 
 
 if __name__ == "__main__":
